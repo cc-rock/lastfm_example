@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">lastfm</string>
+    <string name="artist_image_content_desc">Artist image</string>
+    <string name="search_artist_hint">Search artists</string>
 </resources>
