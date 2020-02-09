@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation_graph.xml"
+    app:startDestination="@+id/artist_search">
+
+    <fragment android:id="@+id/artist_search" android:name="com.example.lastfm.search.ui.ArtistSearchFragment"
+        android:label="Currency Conversion" tools:layout="@layout/fragment_artist_search">
+        <action android:id="@+id/to_artist_detail"
+            app:destination="@id/artist_detail"/>
+    </fragment>
+    <fragment android:id="@+id/artist_detail" android:name="com.example.lastfm.detail.ui.ArtistDetailFragment"
+        android:label="Currency Compare" tools:layout="@layout/fragment_artist_detail"/>
+
+
+</navigation>
