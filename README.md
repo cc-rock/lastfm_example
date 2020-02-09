@@ -15,4 +15,6 @@
 - Modules?
 - readme
 
+- launcher icon?
+
 - Dipendenze?
