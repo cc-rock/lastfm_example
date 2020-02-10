@@ -1,4 +1,4 @@
-package com.example.lastfm.common.data.entities
+package com.example.lastfm.detail.domain
 
 data class ArtistDetail(
     val id: String,

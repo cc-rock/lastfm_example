@@ -1,19 +1,15 @@
 package com.example.lastfm
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.example.lastfm.search.ui.ArtistSearchFragment
+import dagger.android.AndroidInjection
+import dagger.android.support.DaggerAppCompatActivity
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : DaggerAppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        if (savedInstanceState == null) {
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.container, ArtistSearchFragment.newInstance())
-                .commitNow()
-        }
     }
 
 }

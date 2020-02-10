@@ -4,6 +4,10 @@ import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.example.lastfm.MainActivity
 import com.example.lastfm.R
+import com.example.lastfm.detail.di.ArtistDetailModule
+import com.example.lastfm.detail.ui.ArtistDetailFragment
+import com.example.lastfm.search.di.ArtistSearchModule
+import com.example.lastfm.search.ui.ArtistSearchFragment
 import dagger.Module
 import dagger.Provides
 import dagger.android.ContributesAndroidInjector
@@ -25,12 +29,12 @@ abstract class MainActivityModule {
 
     // fragment injectors
 
-  /*  @FragmentScope
-    @ContributesAndroidInjector(modules = [CurrencyConversionModule::class])
-    abstract fun createCurrencyConversionFragmentInjector(): CurrencyConversionFragment
+    @FragmentScope
+    @ContributesAndroidInjector(modules = [ArtistSearchModule::class])
+    abstract fun createArtistSearchFragmentInjector(): ArtistSearchFragment
 
     @FragmentScope
-    @ContributesAndroidInjector(modules = [CurrencyCompareModule::class])
-    abstract fun createCurrencyCompareFragmentInjector(): CurrencyCompareFragment */
+    @ContributesAndroidInjector(modules = [ArtistDetailModule::class])
+    abstract fun createArtistDetailInjector(): ArtistDetailFragment
 
 }
