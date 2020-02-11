@@ -2,6 +2,8 @@ package com.example.lastfm.search.ui
 
 import android.content.Context
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,6 +27,19 @@ class ArtistSearchFragment : Fragment(), ArtistSearchAdapter.Listener {
     }
 
     private val adapter = ArtistSearchAdapter()
+
+    private val textChangeListener = object: TextWatcher {
+        override fun afterTextChanged(editable: Editable?) {
+            editable?.toString()?.let { viewModel.newSearch(it) }
+        }
+
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+        }
+
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+        }
+
+    }
 
     @Inject
     lateinit var viewModelFactory: ArtistSearchViewModelFactory
@@ -64,13 +79,21 @@ class ArtistSearchFragment : Fragment(), ArtistSearchAdapter.Listener {
             }
         })
 
-        search_field.doAfterTextChanged { viewModel.newSearch(it?.toString() ?: "") }
-
         viewModel.viewData.observe(this.viewLifecycleOwner, Observer { newData ->
             adapter.updateData(newData.results, newData.totalCount, newData.loading)
         })
 
         adapter.listener = this
+    }
+
+    override fun onResume() {
+        super.onResume()
+        search_field.addTextChangedListener(textChangeListener)
+    }
+
+    override fun onPause() {
+        search_field.removeTextChangedListener(textChangeListener)
+        super.onPause()
     }
 
     override fun onMoreDataNeeded() {
