@@ -10,47 +10,79 @@ import com.example.lastfm.R
 import com.example.lastfm.common.data.entities.ArtistSearchItem
 import com.squareup.picasso.Picasso
 
-class ArtistSearchAdapter: RecyclerView.Adapter<ArtistSearchAdapter.ArtistSearchViewHolder>() {
+class ArtistSearchAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     companion object {
-        const val LOAD_MORE_THRESHOLD = 5
+        private const val TYPE_ARTIST = 0
+        private const val TYPE_LOADING = 1
+
+        private const val LOAD_MORE_THRESHOLD = 10
     }
 
     private var items: List<ArtistSearchItem> = emptyList()
     private var totalCount = 0
+    private var loading = false
 
     var listener: Listener? = null
 
     var moreDataRequested = false
 
-    override fun getItemCount(): Int = items.size
+    override fun getItemCount(): Int = items.size + 1
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ArtistSearchViewHolder {
-        return ArtistSearchViewHolder(
-            LayoutInflater.from(parent.context)
-                .inflate(R.layout.artist_list_item, parent, false)
-        )
+    override fun getItemViewType(position: Int): Int {
+        return when (position) {
+            items.size -> TYPE_LOADING
+            else -> TYPE_ARTIST
+        }
     }
 
-    override fun onBindViewHolder(holder: ArtistSearchViewHolder, position: Int) {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return when (viewType) {
+            TYPE_ARTIST -> ArtistSearchViewHolder(
+                LayoutInflater.from(parent.context)
+                    .inflate(R.layout.artist_list_item, parent, false)
+            )
+            else -> LoadingViewHolder(
+                LayoutInflater.from(parent.context)
+                    .inflate(R.layout.artist_list_loading_item, parent, false)
+            )
+        }
+    }
+
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         // paylods version used
     }
 
-    override fun onBindViewHolder(holder: ArtistSearchViewHolder, position: Int, payloads: List<Any>) {
-        holder.bindItem(items[position])
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int, payloads: List<Any>) {
+        when(holder) {
+            is ArtistSearchViewHolder -> holder.bindItem(items[position])
+            is LoadingViewHolder -> holder.itemView.visibility = if (loading) View.VISIBLE else View.GONE
+        }
     }
 
-    fun updateData(newItems: List<ArtistSearchItem>, newTotalCount: Int) {
-        val oldSize = items.size
+    fun updateData(newItems: List<ArtistSearchItem>, newTotalCount: Int, newLoading: Boolean) {
+        // This method should be done better, using the DiffUtil class to fire only
+        // the item updates that are really needed, but for time reasons I did it like this
+        val oldSize = itemCount
         items = newItems
-        if (oldSize >= items.size || oldSize == 0) {
+        loading = newLoading
+        if (oldSize >= itemCount || oldSize == 0) {
             notifyDataSetChanged()
         } else {
-            notifyItemRangeChanged(0, oldSize - 1, null)
-            notifyItemRangeInserted(oldSize, items.size - 1)
+            notifyItemRangeChanged(0, oldSize, "")
+            notifyItemRangeInserted(oldSize, itemCount - oldSize)
         }
         totalCount = newTotalCount
-        moreDataRequested = false
+        if (!newLoading) {
+            moreDataRequested = false
+        }
+    }
+
+    fun onScrolledDown(lastVisiblePosition: Int) {
+        if (!moreDataRequested && items.size < totalCount && (items.size - lastVisiblePosition) < LOAD_MORE_THRESHOLD) {
+            listener?.onMoreDataNeeded()
+            moreDataRequested = true
+        }
     }
 
     class ArtistSearchViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
@@ -61,7 +93,7 @@ class ArtistSearchAdapter: RecyclerView.Adapter<ArtistSearchAdapter.ArtistSearch
         fun bindItem(newItem: ArtistSearchItem) {
             if (newItem != item) {
                 item = newItem
-                artistName.text = "${adapterPosition} ${newItem.name}"
+                artistName.text = newItem.name
                 if (!newItem.imageUrl.isNullOrEmpty()) {
                     image.visibility = View.VISIBLE
                     Picasso.get().load(newItem.imageUrl).into(image)
@@ -71,6 +103,8 @@ class ArtistSearchAdapter: RecyclerView.Adapter<ArtistSearchAdapter.ArtistSearch
             }
         }
     }
+
+    class LoadingViewHolder(itemView: View): RecyclerView.ViewHolder(itemView)
 
     interface Listener {
         fun onMoreDataNeeded()

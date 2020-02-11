@@ -10,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.lastfm.R
 import com.example.lastfm.search.viewmodel.ArtistSearchViewModel
 import com.example.lastfm.search.viewmodel.ArtistSearchViewModelFactory
@@ -51,13 +52,22 @@ class ArtistSearchFragment : Fragment(), ArtistSearchAdapter.Listener {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProvider(this, viewModelFactory).get(ArtistSearchViewModel::class.java)
 
-        search_results.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+        val linearLayoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+        search_results.layoutManager = linearLayoutManager
         search_results.adapter = adapter
+
+        search_results.addOnScrollListener(object: RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                if (dy > 0) {
+                    adapter.onScrolledDown(linearLayoutManager.findLastVisibleItemPosition())
+                }
+            }
+        })
 
         search_field.doAfterTextChanged { viewModel.newSearch(it?.toString() ?: "") }
 
         viewModel.viewData.observe(this.viewLifecycleOwner, Observer { newData ->
-            adapter.updateData(newData.results, newData.totalCount)
+            adapter.updateData(newData.results, newData.totalCount, newData.loading)
         })
 
         adapter.listener = this

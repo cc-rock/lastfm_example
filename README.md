@@ -18,3 +18,5 @@
 - launcher icon?
 
 - Dipendenze?
+
+- citare diff callback

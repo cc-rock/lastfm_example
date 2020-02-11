@@ -48,18 +48,18 @@ class ArtistSearchViewModel(
     ) {
         searchJob?.cancel()
 
-        // show loading
-        mutableViewData.postValue(
-            ArtistSearchViewData(
-                query, currentResults, currentTotalCount,
-                loading = true, error = false
-            )
-        )
-
         // launch coroutine in our scope (on background thread)
         searchJob = launch {
 
             delay(300) // debouncing
+
+            // show loading
+            mutableViewData.postValue(
+                ArtistSearchViewData(
+                    query, currentResults, currentTotalCount,
+                    loading = true, error = false
+                )
+            )
 
             val results = try {
                 repository.searchArtistsByName(query, currentResults.size, PAGE_SIZE)
