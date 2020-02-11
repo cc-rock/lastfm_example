@@ -77,4 +77,8 @@ class ArtistSearchFragment : Fragment(), ArtistSearchAdapter.Listener {
         viewModel.loadMoreResults()
     }
 
+    override fun onItemClicked(artistId: String) {
+        viewModel.goToArtistDetail(artistId)
+    }
+
 }

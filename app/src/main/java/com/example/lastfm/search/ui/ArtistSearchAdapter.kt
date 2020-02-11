@@ -25,7 +25,7 @@ class ArtistSearchAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     var listener: Listener? = null
 
-    var moreDataRequested = false
+    private var moreDataRequested = false
 
     override fun getItemCount(): Int = items.size + 1
 
@@ -41,7 +41,9 @@ class ArtistSearchAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             TYPE_ARTIST -> ArtistSearchViewHolder(
                 LayoutInflater.from(parent.context)
                     .inflate(R.layout.artist_list_item, parent, false)
-            )
+            ) {
+                    artistId -> listener?.onItemClicked(artistId)
+            }
             else -> LoadingViewHolder(
                 LayoutInflater.from(parent.context)
                     .inflate(R.layout.artist_list_loading_item, parent, false)
@@ -50,7 +52,7 @@ class ArtistSearchAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        // paylods version used
+        // payloads version used
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int, payloads: List<Any>) {
@@ -85,10 +87,17 @@ class ArtistSearchAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         }
     }
 
-    class ArtistSearchViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
+    class ArtistSearchViewHolder(itemView: View,
+                                 private val onClickAction: (String) -> Unit): RecyclerView.ViewHolder(itemView) {
         private val image: ImageView = itemView.findViewById(R.id.image)
         private val artistName: TextView = itemView.findViewById(R.id.artist_name)
         private var item: ArtistSearchItem? = null
+
+        init {
+            itemView.setOnClickListener {
+                item?.let { onClickAction(it.id) }
+            }
+        }
 
         fun bindItem(newItem: ArtistSearchItem) {
             if (newItem != item) {
@@ -108,6 +117,7 @@ class ArtistSearchAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     interface Listener {
         fun onMoreDataNeeded()
+        fun onItemClicked(artistId: String)
     }
 
 }

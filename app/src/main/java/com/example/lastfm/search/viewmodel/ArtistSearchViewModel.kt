@@ -4,12 +4,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.lastfm.common.data.entities.ArtistSearchItem
+import com.example.lastfm.search.domain.ArtistSearchNavigator
 import com.example.lastfm.search.domain.ArtistSearchRepository
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
 
 class ArtistSearchViewModel(
     private val repository: ArtistSearchRepository,
+    private val navigator: ArtistSearchNavigator,
     private val ioDispatcher: CoroutineDispatcher
 ): ViewModel(), CoroutineScope {
 
@@ -39,6 +41,10 @@ class ArtistSearchViewModel(
                 currentData.totalCount
             )
         }
+    }
+
+    fun goToArtistDetail(artistId: String) {
+        navigator.goToArtistDetail(artistId)
     }
 
     private fun performSearch(

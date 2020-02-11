@@ -45,5 +45,10 @@ data class LastFmArtistDetail(
     val mbid: String,
     val url: String,
     val image: List<LastFmArtistImage>,
-    val content: String
+    val bio: LastFmArtistBio?
+)
+
+@JsonClass(generateAdapter = true)
+data class LastFmArtistBio(
+    val content: String?
 )
