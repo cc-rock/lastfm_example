@@ -30,7 +30,7 @@ class ArtistSearchViewModel(
     val viewData: LiveData<ArtistSearchViewData> = mutableViewData
 
     fun newSearch(query: String) {
-        performSearch(query, emptyList(), 0)
+        performSearch(query, emptyList(), 0, true)
     }
 
     fun loadMoreResults() {
@@ -38,7 +38,8 @@ class ArtistSearchViewModel(
             performSearch(
                 currentData.searchQuery,
                 currentData.results,
-                currentData.totalCount
+                currentData.totalCount,
+                false
             )
         }
     }
@@ -50,14 +51,17 @@ class ArtistSearchViewModel(
     private fun performSearch(
         query: String,
         currentResults: List<ArtistSearchItem>,
-        currentTotalCount: Int
+        currentTotalCount: Int,
+        debounce: Boolean
     ) {
         searchJob?.cancel()
 
         // launch coroutine in our scope (on background thread)
         searchJob = launch {
 
-            delay(300) // debouncing
+            if (debounce) {
+                delay(300)
+            }
 
             // show loading
             mutableViewData.postValue(
