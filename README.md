@@ -1,22 +1,18 @@
+LastFM Api Example app
+======================
 
+Implementation details
+======================
+- MVVM Architecture with Android Architecture components (Livedata, Lifecycle)
+- Kotlin coroutines for concurrency
+- Navigation library from Android Architecture components
+- Dependency injection with Dagger 2
 
-- Navigation components
-- Search title
+Improvements / open points
+==========================
 
-- Paginazione?
-
-- Architecture
-- Retrofit
-- Last FM api
-- Dagger
-- Coroutines?
-- Unit tests
-- Espresso tests
-- Modules?
-- readme
-
-- launcher icon?
-
-- Dipendenze?
-
-- citare diff callback
+- Improve the UI
+- Show errors in search view
+- The link in the detail view does not work
+- Write unit tests for all view models, repositories and converters
+- Write more espresso tests
